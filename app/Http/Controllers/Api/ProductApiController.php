@@ -79,6 +79,7 @@ class ProductApiController extends Controller
      */
     public function destroy(Product $product)
     {
+        $this->authorize('delete', $product);
         $this->service->delete($product);
         return response()->noContent();
     }

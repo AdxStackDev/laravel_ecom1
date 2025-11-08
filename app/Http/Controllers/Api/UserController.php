@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use Silber\Bouncer\BouncerFacade as Bouncer;
 
 class UserController extends Controller
@@ -15,63 +16,74 @@ class UserController extends Controller
     public function register(Request $request)
     {
         $data = $request->validate([
-            'name' => ['required'], 'email' => ['required','email','unique:users'],
-            'password' => ['required','min:8']
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8'],
         ]);
+
         $user = User::create([
-            'name'=>$data['name'],
-            'email'=>$data['email'],
-            'password'=>Hash::make($data['password'])
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
         ]);
-        // Assign default role
+
         Bouncer::assign('viewer')->to($user);
-        return response()->json($user, 201);
+
+        $token = $user->createToken('api')->plainTextToken;
+
+        return (new UserResource($user))->additional(['token' => $token]);
     }
 
     // Login endpoint
     public function login(Request $request)
     {
         $data = $request->validate([
-            'email' => ['required','email'],
-            'password' => ['required']
+            'email' => ['required', 'email'],
+            'password' => ['required'],
         ]);
+
         if (!Auth::attempt($data)) {
-            return response()->json(['error'=>'Invalid credentials'], 401);
+            return response()->json(['error' => 'Invalid credentials'], 401);
         }
+
         $user = Auth::user();
-        // If using Sanctum
         $token = $user->createToken('api')->plainTextToken;
-        return response()->json(['user'=>$user, 'token'=>$token]);
+
+        return (new UserResource($user))->additional(['token' => $token]);
     }
 
     // List users (admin only)
     public function index()
     {
-        $this->authorize('viewAny', User::class); // Or Bouncer::can('view-users')
-        return User::paginate();
+        $this->authorize('viewAny', User::class);
+        return UserResource::collection(User::paginate());
     }
 
     // Show details for one user
     public function show(User $user)
     {
         $this->authorize('view', $user);
-        return $user;
+        return new UserResource($user);
     }
 
     // Update user (admin or self)
     public function update(Request $request, User $user)
     {
         $this->authorize('update', $user);
-        $user->update($request->validate([
-            'name' => ['sometimes'],
-            'email' => ['sometimes','email','unique:users,email,'.$user->id],
-            'password' => ['sometimes','min:8']
-        ]));
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
+
+        $validatedData = $request->validate([
+            'name' => ['sometimes', 'string', 'max:255'],
+            'email' => ['sometimes', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'password' => ['sometimes', 'string', 'min:8'],
+        ]);
+
+        if (isset($validatedData['password'])) {
+            $validatedData['password'] = Hash::make($validatedData['password']);
         }
-        $user->save();
-        return $user;
+
+        $user->update($validatedData);
+
+        return new UserResource($user);
     }
 
     // Delete user (admin only)

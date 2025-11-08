@@ -23,7 +23,7 @@ class ProductPolicy
 
     public function delete(User $user, Product $product): bool
     {
-        return $user->id === $product->user_id;
+        return $user->is_admin() || $user->id === $product->user_id;
     }
 }
 
