@@ -1,0 +1,101 @@
+*.sqlite*
+# Laravel & PHP
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+/.env
+/.env.*
+/.env.local
+Homestead.yaml
+Homestead.json
+/.phpunit.result.cache
+.phpunit.result.cache
+.php_cs.cache
+*.phpunit.result.cache
+
+# Laravel specific
+/.idea
+/.vscode
+/.phpunit.cache
+/storage/logs
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/framework/testing/*
+/storage/oauth-private.key
+/storage/oauth-public.key
+/public/hot
+/public/storage
+/database/database.sqlite
+/database/database.sqlite3
+/database/*.sqlite
+/database/*.sqlite3
+/Dump.rdb
+
+# NPM/Yarn
+/node_modules
+/npm-debug.log
+/yarn-error.log
+/yarn-debug.log*
+
+# Composer
+/vendor/
+/composer.lock
+
+# OS/system
+.DS_Store
+Thumbs.db
+ehthumbs.db
+*.swp
+*.swo
+*.swn
+*.bak
+*.tmp
+*.log
+
+# Editor directories and files
+/.idea/
+/.vscode/
+/*.sublime-workspace
+*.sublime-project
+
+# JetBrains IDE files
+/.idea/
+*.iws
+*.iml
+*.ipr
+
+# Laravel Sail
+docker-compose.override.yml
+
+# Valet
+.valet/
+
+# PHPUnit
+/.phpunit.cache
+.phpunit.result.cache
+
+# Built assets
+/public/build
+/public/mix-manifest.json
+
+# Optional: coverage reports
+/coverage
+/coverage.xml
+clover.xml
+.phpunit.cache
+
+# Local dotenv files
+.env.development.local
+.env.development
+.env.test
+.env.testing
+.env.example
+.env.backup
+.env.production
+.env.staging
+
+# Others
+/.env.save
+/.env.old
