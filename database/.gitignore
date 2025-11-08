@@ -1,4 +1,4 @@
-# *.sqlite*
+*.sqlite*
 # Laravel & PHP
 /vendor
 /node_modules
@@ -27,10 +27,10 @@ Homestead.json
 /storage/oauth-public.key
 /public/hot
 /public/storage
-# /database/database.sqlite
-# /database/database.sqlite3
-# /database/*.sqlite
-# /database/*.sqlite3
+/database/database.sqlite
+/database/database.sqlite3
+/database/*.sqlite
+/database/*.sqlite3
 /Dump.rdb
 
 # NPM/Yarn
