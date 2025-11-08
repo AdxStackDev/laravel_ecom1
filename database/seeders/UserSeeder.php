@@ -11,6 +11,9 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
+        // The common password for all users
+        $commonPassword = Hash::make('12345');
+
         // Create roles
         Bouncer::role()->firstOrCreate(['name' => 'admin']);
         Bouncer::role()->firstOrCreate(['name' => 'editor']);
@@ -19,17 +22,26 @@ class UserSeeder extends Seeder
         // Create admin user
         $admin = User::firstOrCreate(
             ['email' => 'admin@example.com'],
-            ['name' => 'Admin', 'password' => Hash::make('password')]
+            ['name' => 'Admin', 'password' => $commonPassword]
         );
-        
         Bouncer::assign('admin')->to($admin);
 
         // Create editor user
-        $editor = User::factory()->create(['email' => 'editor@example.com']);
+        // The 'create' method on the factory can accept overrides for attributes
+        $editor = User::factory()->create([
+            'email' => 'editor@example.com',
+            'password' => $commonPassword,
+        ]);
         Bouncer::assign('editor')->to($editor);
 
         // Bulk create viewers
-        User::factory()->count(10)->create()->each(fn($u) => Bouncer::assign('viewer')->to($u));
+        // The 'state' method can set attributes before creating the models
+        User::factory()
+            ->count(10)
+            ->state([
+                'password' => $commonPassword,
+            ])
+            ->create()
+            ->each(fn($u) => Bouncer::assign('viewer')->to($u));
     }
 }
-

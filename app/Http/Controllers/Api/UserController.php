@@ -41,18 +41,12 @@ class UserController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
-        if($request->email == 'admin@example.com'){
-            $user = User::where('email', $data['email'])->first();
-            if (!$user || !Hash::check($data['password'], $user->password)) {
-                return response()->json(['error' => 'Invalid credentials'], 401);
-            }
-        }else{
-            if (!Auth::attempt($data)) {
-                return response()->json(['error' => 'Invalid credentials'], 401);
-            }
-            $user = Auth::user();
+
+        if (!Auth::attempt($data)) {
+            return response()->json(['error' => 'Invalid credentials'], 401);
         }
 
+        $user = Auth::user();
         $token = $user->createToken('api')->plainTextToken;
 
         return (new UserResource($user))->additional(['token' => $token]);
