@@ -23,8 +23,7 @@ Route::middleware(['api','throttle:ecommerce-api'])
     ->prefix('v1')
     ->group(function () {
         Route::apiResource('products', ProductApiController::class)
-            ->scoped(['product' => 'slug'])
-            ->middleware('role:admin,seller');
+            ->scoped(['product' => 'slug']);
     });
 
 // Public registration/login
