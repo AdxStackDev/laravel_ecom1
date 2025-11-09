@@ -18,12 +18,9 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        
-        \App\Events\ProductPurchased::class => [
-            \App\Listeners\SendOrderConfirmation::class,
-            \App\Listeners\UpdateProductStats::class,
+        \App\Events\ProductSold::class => [
+            \App\Listeners\ProcessSaleForReporting::class,
         ],
-
     ];
 
     /**

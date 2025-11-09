@@ -2,32 +2,21 @@
 
 namespace App\Observers;
 
+use App\Events\ProductSold;
 use App\Models\Product;
+use Illuminate\Support\Str;
 
 class ProductObserver
 {
-    
-    
-    public function creating(Product $product): void
-    {
-        $product->slug = Str::slug($product->slug ?? $product->name);
-    }
-    
-    
     /**
-     * Handle the Product "created" event.
+     * Handle the Product "creating" event.
      *
      * @param  \App\Models\Product  $product
      * @return void
      */
-    public function created(Product $product)
+    public function creating(Product $product): void
     {
-        //
-    }
-
-    public function updating(Product $product): void
-    {
-        GenerateSalesReport::dispatch($product->id);
+        $product->slug = Str::slug($product->slug ?? $product->name);
     }
 
     /**
@@ -38,7 +27,10 @@ class ProductObserver
      */
     public function updated(Product $product)
     {
-        //
+        // If the stock was decremented, we assume a sale and fire the event.
+        if ($product->isDirty('stock') && $product->getOriginal('stock') > $product->stock) {
+            ProductSold::dispatch($product->id);
+        }
     }
 
     /**
