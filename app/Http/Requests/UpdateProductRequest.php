@@ -9,6 +9,10 @@ class UpdateProductRequest extends FormRequest
 {
     public function authorize(): bool
     {
+        if ($this->user()->is_admin()) {
+            return true;
+        }
+
         $product = $this->route('product');
         return $product && $this->user()?->can('update', $product);
     }
