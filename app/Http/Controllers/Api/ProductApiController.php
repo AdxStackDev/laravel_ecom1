@@ -15,6 +15,15 @@ use Illuminate\Pipeline\Pipeline;
 class ProductApiController extends Controller
 {
     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct(protected ProductService $service)
+    {
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
