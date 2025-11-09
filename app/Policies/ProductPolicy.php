@@ -14,11 +14,9 @@ class ProductPolicy
 
     public function create(User $user): bool { return $user->is_admin() || $user->is_seller(); }
 
-    public function update(User $user, Product $product): Response
+    public function update(User $user, Product $product): bool
     {
-        return $user->id === $product->user_id
-            ? Response::allow()
-            : Response::deny('Not owner of product.');
+        return $user->is_admin() || $user->id === $product->user_id;
     }
 
     public function delete(User $user, Product $product): bool
