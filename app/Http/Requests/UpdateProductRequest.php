@@ -4,11 +4,13 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Models\Product;
+use App\Models\User;
 
 class UpdateProductRequest extends FormRequest
 {
     public function authorize(): bool
     {
+      
         if ($this->user()->is_admin()) {
             return true;
         }
