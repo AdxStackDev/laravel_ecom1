@@ -15,25 +15,23 @@ use App\Http\Controllers\Api\UserController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::middleware(['api','throttle:ecommerce-api'])
-    ->prefix('v1')
-    ->group(function () {
-        Route::apiResource('products', ProductApiController::class)
-            ->scoped(['product' => 'slug']);
-    });
-
 // Public registration/login
 Route::post('register', [UserController::class, 'register']);
 Route::post('login',    [UserController::class, 'login'])->name('login');
 
 // Protected (auth:sanctum required)
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
     Route::get('users',         [UserController::class, 'index']);
     Route::get('users/{user}',  [UserController::class, 'show']);
     Route::put('users/{user}',  [UserController::class, 'update']);
     Route::delete('users/{user}', [UserController::class, 'destroy']);
+
+    Route::prefix('v1')->group(function () {
+        Route::apiResource('products', ProductApiController::class)
+            ->scoped(['product' => 'slug']);
+    });
 });
